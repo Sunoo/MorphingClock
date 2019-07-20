@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
   digit3.DrawColon(color);
   
   bool initialTime = true;
-  bool zeroBlanked = false;
+  signed char zeroState = 0; //0 = show zero, 1 = blank zero, 2 = zero blanked, -1 = restore zero
   
   while (true) {
       std::time_t tt = system_clock::to_time_t(system_clock::now());
@@ -127,42 +127,46 @@ int main(int argc, char *argv[]) {
       ss << std::put_time(ptm, time_format);
       string time = ss.str();
       
-      if (!leadingZero && time[0] == '0')
+      int h1 = getDigit(time, 0);
+      int h2 = getDigit(time, 1);
+      int m1 = getDigit(time, 3);
+      int m2 = getDigit(time, 4);
+
+      if (!leadingZero && h1 == 0 && zeroState == 0)
       {
-        if (!zeroBlanked)
-        {
-          digit1.Blank();
-          digit1.SetColor(Color(0,0,0));
-          zeroBlanked = true;
-        }
+        zeroState = 1;
       }
-      else
+      else if (zeroState == 2)
       {
-        if (zeroBlanked)
-        {
-          digit1.Draw(getDigit(time, 0));
-        }
+        zeroState = -1;
       }
-        
+      
       if (initialTime) { // If we didn't have a previous time. Just draw it without morphing.
-        digit1.Draw(getDigit(time, 0));
-        digit2.Draw(getDigit(time, 1));
-        digit3.Draw(getDigit(time, 3));
-        digit4.Draw(getDigit(time, 4));
+        digit4.Draw(m2);
+        digit3.Draw(m1);
+        digit2.Draw(h2);
+        if (zeroState == 0) digit1.Draw(h1);
         initialTime = false;
       }
       else
       {
-        int h1 = getDigit(time, 0);
-        int h2 = getDigit(time, 1);
-        int m1 = getDigit(time, 3);
-        int m2 = getDigit(time, 4);
         if (m2 != digit4.Value()) digit4.Morph(m2);
         if (m1 != digit3.Value()) digit3.Morph(m1);
         if (h2 != digit2.Value()) digit2.Morph(h2);
-        if (h1 != digit1.Value()) digit1.Morph(h1);
+        if (zeroState == 0 && h1 != digit1.Value()) digit1.Morph(h1);
       }
-
+      
+      if (zeroState == 1)
+      {
+        digit1.Blank();
+        zeroState = 2;
+      }
+      else if (zeroState == -1)
+      {
+        digit1.Draw(h1);
+        zeroState = 0;
+      }
+        
       ++ptm->tm_min;
       ptm->tm_sec=0;
       std::this_thread::sleep_until(system_clock::from_time_t(mktime(ptm)));
