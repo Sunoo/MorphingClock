@@ -23,7 +23,7 @@ static void InterruptHandler(int signo) {
 
 static int usage(const char *progname, RGBMatrix::Options &matrix_options, rgb_matrix::RuntimeOptions &runtime_opt) {
   fprintf(stderr, "usage: %s [options]\n", progname);
-  fprintf(stderr, "Displays the time as a series of falling Tetris blocks.\n");
+  fprintf(stderr, "Displays the time using a morphing 7 segment display.\n");
   fprintf(stderr, "Options:\n");
   rgb_matrix::PrintMatrixFlags(stderr, matrix_options, runtime_opt);
   fprintf(stderr,
@@ -118,6 +118,7 @@ int main(int argc, char *argv[]) {
   digit3.DrawColon(color);
   
   bool initialTime = true;
+  bool zeroBlanked = false;
   
   while (true) {
       std::time_t tt = system_clock::to_time_t(system_clock::now());
@@ -128,11 +129,19 @@ int main(int argc, char *argv[]) {
       
       if (!leadingZero && time[0] == '0')
       {
-        digit1.SetColor(Color(0, 0, 0));
+        if (!zeroBlanked)
+        {
+          digit1.Blank();
+          digit1.SetColor(Color(0,0,0));
+          zeroBlanked = true;
+        }
       }
       else
       {
-        digit1.SetColor(color);
+        if (zeroBlanked)
+        {
+          digit1.Draw(getDigit(time, 0));
+        }
       }
         
       if (initialTime) { // If we didn't have a previous time. Just draw it without morphing.

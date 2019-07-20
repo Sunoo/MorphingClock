@@ -7,8 +7,6 @@ const char sD = 3;
 const char sE = 4;
 const char sF = 5;
 const char sG = 6;
-/*const int segHeight = 5;
-const int segWidth = segHeight;*/
 
 char digitBits[] = {
   0b11111100, // 0 ABCDEF--
@@ -38,6 +36,11 @@ Digit::Digit(Canvas &d, char value, uint16_t xo, uint16_t yo, uint16_t segLength
 void Digit::SetColor(Color color)
 {
   _color = color;
+}
+
+void Digit::Blank()
+{
+  drawFillRect(0, 0, segWidth + 2, 2 * segHeight + 3, black);
 }
 
 char Digit::Value()
