@@ -7,8 +7,8 @@ const char sD = 3;
 const char sE = 4;
 const char sF = 5;
 const char sG = 6;
-const int segHeight = 4;
-const int segWidth = segHeight;
+/*const int segHeight = 5;
+const int segWidth = segHeight;*/
 
 char digitBits[] = {
   0b11111100, // 0 ABCDEF--
@@ -25,15 +25,23 @@ char digitBits[] = {
 
 Color black = Color(0, 0, 0);
 
-Digit::Digit(Canvas &d, char value, uint16_t xo, uint16_t yo, Color color) {
+Digit::Digit(Canvas &d, char value, uint16_t xo, uint16_t yo, uint16_t segLength, Color color) {
   _display = &d;
   _value = value;
   xOffset = xo;
   yOffset = yo;
+  segHeight = segLength;
+  segWidth = segLength;
   _color = color;
 }
 
-char Digit::Value() {
+void Digit::SetColor(Color color)
+{
+  _color = color;
+}
+
+char Digit::Value()
+{
   return _value;
 }
 

@@ -6,8 +6,6 @@
 #include <unistd.h>
 #include <iomanip>
 #include <thread>
-#include <iostream>
-#include <string>
 
 using namespace std;
 using namespace rgb_matrix;
@@ -29,12 +27,11 @@ static int usage(const char *progname, RGBMatrix::Options &matrix_options, rgb_m
   fprintf(stderr, "Options:\n");
   rgb_matrix::PrintMatrixFlags(stderr, matrix_options, runtime_opt);
   fprintf(stderr,
-          "\t-x <x>            : Starting X position of displayed time. Default: 1\n"
-          "\t-y <yFinish>      : Ending Y position of displayed time. Default: 16\n"
-          "\t-0                : Show leading zeros in the hour.\n"
+          "\t-x <xOrig>        : Starting X position of displayed time. Default: 1\n"
+          "\t-y <yOrig>        : Starting Y position of displayed time. Default: 2\n"
+          "\t-l <segLength>    : Length of each segment in the time display. Default: 4\n"
+          "\t-0                : Show leading zero in the hour.\n"
           "\t-t                : Use 24-hour clock.\n"
-          "\t-r                : Force refresh of all digits every minute.\n"
-          "\t-d                : Use double size blocks.\n"
           );
   return 1;
 }
@@ -54,21 +51,31 @@ int main(int argc, char *argv[]) {
     return usage(argv[0], matrix_options, runtime_opt);
   }
 
-  char *time_format = "%I:%M";
-  /*int x = 1;
-  int yFinish = 16;
+  Color color = Color(0, 0, 255);
+  
+  /*int xOrig = -4;
+  int yOrig = 1;
+  int segLength = 5;*/
+  /*int xOrig = -6;
+  int yOrig = 0;
+  int segLength = 6;*/
+  int xOrig = 1;
+  int yOrig = 2;
+  int segLength = 4;
   bool leadingZero = false;
-  bool forceRefresh = false;
-  int scale = 1;
+  char *time_format = "%I:%M";
 
   int opt;
-  while ((opt = getopt(argc, argv, "x:y:0trd")) != -1) {
+  while ((opt = getopt(argc, argv, "x:y:l:0t")) != -1) {
     switch (opt) {
       case 'x':
-        x = atoi(optarg);
+        xOrig = atoi(optarg);
         break;
       case 'y':
-        yFinish = atoi(optarg);
+        yOrig = atoi(optarg);
+        break;
+      case 'l':
+        segLength = atoi(optarg);
         break;
       case '0':
         leadingZero = true;
@@ -76,17 +83,11 @@ int main(int argc, char *argv[]) {
       case 't':
         time_format = "%H:%M";
         break;
-      case 'r':
-        forceRefresh = true;
-        break;
-      case 'd':
-        scale = 2;
-        break;
       break;
       default:
         return usage(argv[0], matrix_options, runtime_opt);
     }
-  }*/
+  }
 
   canvas = rgb_matrix::CreateMatrixFromOptions(matrix_options, runtime_opt);
   if (canvas == NULL)
@@ -99,14 +100,12 @@ int main(int argc, char *argv[]) {
 
   printf("Press <CTRL-C> to exit and reset LEDs\n");
 
-  int segWidth = 4;
+  Digit digit1(*canvas, 0, xOrig, yOrig, segLength, color);
+  Digit digit2(*canvas, 0, xOrig + (segLength + 3), yOrig, segLength, color);
+  Digit digit3(*canvas, 0, xOrig + 3 + (segLength + 3) * 2, yOrig, segLength, color);
+  Digit digit4(*canvas, 0, xOrig + 3 + (segLength + 3) * 3, yOrig, segLength, color);
 
-  Digit digit1(*canvas, 0, 1, 2, Color(0, 0, 255));
-  Digit digit2(*canvas, 0, 1 + (segWidth + 3), 2, Color(0, 0, 255));
-  Digit digit3(*canvas, 0, 1 + 3 + (segWidth + 3) * 2, 2, Color(0, 0, 255));
-  Digit digit4(*canvas, 0, 1 + 3 + (segWidth + 3) * 3, 2, Color(0, 0, 255));
-
-  digit3.DrawColon(Color(0, 0, 255));
+  digit3.DrawColon(color);
   
   bool initialTime = true;
   
@@ -117,12 +116,14 @@ int main(int argc, char *argv[]) {
       ss << std::put_time(ptm, time_format);
       string time = ss.str();
       
-      /*if (!leadingZero && time[0] == '0')
+      if (!leadingZero && time[0] == '0')
       {
-        time[0] = ' ';
-      }*/
-      
-      //cout << time << endl;
+        digit1.SetColor(Color(0, 0, 0));
+      }
+      else
+      {
+        digit1.SetColor(color);
+      }
         
       if (initialTime) { // If we didn't have a previous time. Just draw it without morphing.
         digit1.Draw(getDigit(time, 0));
