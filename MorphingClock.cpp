@@ -32,8 +32,13 @@ static int usage(const char *progname, RGBMatrix::Options &matrix_options, rgb_m
           "\t-l <segLength>    : Length of each segment in the time display. Default: 4\n"
           "\t-0                : Show leading zero in the hour.\n"
           "\t-t                : Use 24-hour clock.\n"
+          "\t-C <r,g,b>        : Color. Default 0,0,255\n"
           );
   return 1;
+}
+
+static bool parseColor(Color *c, const char *str) {
+  return sscanf(str, "%hhu,%hhu,%hhu", &c->r, &c->g, &c->b) == 3;
 }
 
 static int getDigit(string input, int pos)
@@ -52,7 +57,6 @@ int main(int argc, char *argv[]) {
   }
 
   Color color = Color(0, 0, 255);
-  
   /*int xOrig = -4;
   int yOrig = 1;
   int segLength = 5;*/
@@ -66,7 +70,7 @@ int main(int argc, char *argv[]) {
   char *time_format = "%I:%M";
 
   int opt;
-  while ((opt = getopt(argc, argv, "x:y:l:0t")) != -1) {
+  while ((opt = getopt(argc, argv, "x:y:l:0tC:")) != -1) {
     switch (opt) {
       case 'x':
         xOrig = atoi(optarg);
@@ -83,6 +87,12 @@ int main(int argc, char *argv[]) {
       case 't':
         time_format = "%H:%M";
         break;
+      case 'C':
+        if (!parseColor(&color, optarg)) {
+          fprintf(stderr, "Invalid color spec: %s\n", optarg);
+          return usage(argv[0], matrix_options, runtime_opt);
+        }
+      break;
       break;
       default:
         return usage(argv[0], matrix_options, runtime_opt);
