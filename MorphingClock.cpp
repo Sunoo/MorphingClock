@@ -132,9 +132,12 @@ int main(int argc, char *argv[]) {
       int m1 = getDigit(time, 3);
       int m2 = getDigit(time, 4);
 
-      if (!leadingZero && h1 == 0 && zeroState == 0)
+      if (!leadingZero && h1 == 0)
       {
-        zeroState = 1;
+        if (zeroState == 0)
+        {
+          zeroState = 1;
+        }
       }
       else if (zeroState == 2)
       {
@@ -166,7 +169,7 @@ int main(int argc, char *argv[]) {
         digit1.Draw(h1);
         zeroState = 0;
       }
-        
+      
       ++ptm->tm_min;
       ptm->tm_sec=0;
       std::this_thread::sleep_until(system_clock::from_time_t(mktime(ptm)));
