@@ -1,31 +1,44 @@
 #ifndef DIGIT_H
 #define DIGIT_H
 
-#include <Arduino.h>
+#include "led-matrix.h"
+#include "graphics.h"
 
-#include <PxMatrix.h> // https://github.com/2dom/PxMatrix
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+using rgb_matrix::GPIO;
+using rgb_matrix::RGBMatrix;
+using rgb_matrix::Canvas;
+
+using namespace rgb_matrix;
 
 class Digit {
   
   public:
-    Digit(PxMATRIX* d, byte value, uint16_t xo, uint16_t yo, uint16_t color);
-    void Draw(byte value);
-    void Morph(byte newValue);
-    byte Value();
-    void DrawColon(uint16_t c);
+    Digit(Canvas &d, char value, uint16_t xo, uint16_t yo, Color color);
+    void Draw(char value);
+    void Morph(char newValue);
+    char Value();
+    void DrawColon(Color c);
     
   private:
-    PxMATRIX* _display;
-    byte _value;
-    uint16_t _color;
+    Canvas *_display;
+    char _value;
+    Color _color;
     uint16_t xOffset;
     uint16_t yOffset;
-    int animSpeed = 30;
-
-    void drawPixel(uint16_t x, uint16_t y, uint16_t c);
-    void drawFillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t c);
-    void drawLine(uint16_t x, uint16_t y, uint16_t x2, uint16_t y2, uint16_t c);
-    void drawSeg(byte seg);
+    int animSpeed = 30000;
+    
+    bool bitRead(char b, int bitPos);
+    void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, Color color);
+    void drawPixel(uint16_t x, uint16_t y, Color c);
+    void drawPixelFlip(uint16_t x, uint16_t y, Color c);
+    void drawFillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, Color c);
+    void drawLine(uint16_t x, uint16_t y, uint16_t x2, uint16_t y2, Color c);
+    void drawLineFlip(uint16_t x, uint16_t y, uint16_t x2, uint16_t y2, Color c);
+    void drawSeg(char seg);
     void Morph2();
     void Morph3();
     void Morph4();
