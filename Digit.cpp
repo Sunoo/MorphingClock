@@ -1,5 +1,8 @@
 #include "Digit.h"
 
+#include <iostream>
+using namespace std;
+
 const char sA = 0;
 const char sB = 1;
 const char sC = 2;
@@ -59,22 +62,27 @@ void Digit::drawLine(uint16_t x, uint16_t y, uint16_t x2, uint16_t y2, Color c)
   DrawLine(_display, xOffset + x, (2 * segHeight + 3) - 1 - y + yOffset, xOffset + x2, (2 * segHeight + 3) - 1 - y2 + yOffset, c);
 }
 
-void Digit::drawFillRect(int16_t x, int16_t y, uint16_t w, uint16_t h, Color color)
+void Digit::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, Color color)
 {
   for (int16_t x_pos = x; x_pos < x + w; x_pos++)
   {
-    for (int16_t y_pos = y; y_pos > y - h; y_pos--)
+    for (int16_t y_pos = y; y_pos < y + h; y_pos++)
     {
-      drawPixel(x_pos, y_pos, color);
+      _display->SetPixel(x_pos, y_pos, color.r, color.g, color.b);
     }
   }
+}
+
+void Digit::drawFillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, Color c)
+{
+  fillRect(xOffset + x, y + yOffset, w, h, c);
 }
 
 void Digit::DrawColon(Color c)
 {
   // Colon is drawn to the left of this digit
-  drawFillRect(-3, segHeight-1, 2,2, c);
-  drawFillRect(-3, segHeight+1+3, 2,2, c);
+  drawFillRect(-3, segHeight+1-3, 2, 2, c);
+  drawFillRect(-3, segHeight+3, 2, 2, c);
 }
 
 void Digit::drawSeg(char seg)

@@ -37,12 +37,10 @@ class Digit {
     bool _disable = false;
     
     bool bitRead(char b, int bitPos);
-    //void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, Color color);
+    void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, Color color);
     void drawPixel(int16_t x, int16_t y, Color c);
-    //void drawPixelFlip(uint16_t x, uint16_t y, Color c);
-    void drawFillRect(int16_t x, int16_t y, uint16_t w, uint16_t h, Color c);
+    void drawFillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, Color c);
     void drawLine(uint16_t x, uint16_t y, uint16_t x2, uint16_t y2, Color c);
-    //void drawLineFlip(uint16_t x, uint16_t y, uint16_t x2, uint16_t y2, Color c);
     void drawSeg(char seg);
     void Morph2();
     void Morph3();
