@@ -17,7 +17,7 @@ using namespace rgb_matrix;
 class Digit {
   
   public:
-    Digit(Canvas &d, char value, uint16_t xo, uint16_t yo, uint16_t segLength, Color color);
+    Digit(Canvas &d, char value, uint16_t xo, uint16_t yo, uint16_t segLength, Color color, uint16_t animSpeed);
     void SetColor(Color color);
     void Blank();
     void Draw(char value);
@@ -33,7 +33,7 @@ class Digit {
     uint16_t yOffset;
     uint16_t segHeight;
     uint16_t segWidth;
-    int animSpeed = 30000;
+    int _animSpeed;
     bool _disable = false;
     
     bool bitRead(char b, int bitPos);

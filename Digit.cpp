@@ -23,7 +23,7 @@ char digitBits[] = {
 
 Color black = Color(0, 0, 0);
 
-Digit::Digit(Canvas &d, char value, uint16_t xo, uint16_t yo, uint16_t segLength, Color color) {
+Digit::Digit(Canvas &d, char value, uint16_t xo, uint16_t yo, uint16_t segLength, Color color, uint16_t animSpeed) {
   _display = &d;
   _value = value;
   xOffset = xo;
@@ -31,6 +31,7 @@ Digit::Digit(Canvas &d, char value, uint16_t xo, uint16_t yo, uint16_t segLength
   segHeight = segLength;
   segWidth = segLength;
   _color = color;
+  _animSpeed = animSpeed;
 }
 
 void Digit::SetColor(Color color)
@@ -134,7 +135,7 @@ void Digit::Morph2() {
 
     drawLineFlip(segWidth + 1 - i, 1, segWidth + 1 - i, segHeight, black);
     drawLineFlip(segWidth - i, 1, segWidth - i, segHeight, _color);
-    usleep(animSpeed);
+    usleep(_animSpeed);
   }
 }
 
@@ -144,7 +145,7 @@ void Digit::Morph3() {
   {
     drawLineFlip(0 + i, 1, 0 + i, segHeight, black);
     drawLineFlip(1 + i, 1, 1 + i, segHeight, _color);
-    usleep(animSpeed);
+    usleep(_animSpeed);
   }
 }
 
@@ -155,7 +156,7 @@ void Digit::Morph4() {
     drawPixelFlip(segWidth - i, segHeight * 2 + 2, black); // Erase A
     drawPixelFlip(0, segHeight * 2 + 1 - i, _color); // Draw as F
     drawPixelFlip(1 + i, 0, black); // Erase D
-    usleep(animSpeed);
+    usleep(_animSpeed);
   }
 }
 
@@ -166,7 +167,7 @@ void Digit::Morph5() {
     drawPixelFlip(segWidth + 1, segHeight + 2 + i, black); // Erase B
     drawPixelFlip(segWidth - i, segHeight * 2 + 2, _color); // Draw as A
     drawPixelFlip(segWidth - i, 0, _color); // Draw D
-    usleep(animSpeed);
+    usleep(_animSpeed);
   }
 }
 
@@ -177,7 +178,7 @@ void Digit::Morph6() {
     // Move C right to left
     drawLineFlip(segWidth - i, 1, segWidth - i, segHeight, _color);
     if (i > 0) drawLineFlip(segWidth - i + 1, 1, segWidth - i + 1, segHeight, black);
-    usleep(animSpeed);
+    usleep(_animSpeed);
   }
 }
 
@@ -196,7 +197,7 @@ void Digit::Morph7() {
     // Erase D and G gradually
     drawPixelFlip(1 + i, 0, black); // D
     drawPixelFlip(1 + i, segHeight + 1, black); // G
-    usleep(animSpeed);
+    usleep(_animSpeed);
   }
 }
 
@@ -217,7 +218,7 @@ void Digit::Morph8() {
       drawPixelFlip(segWidth - i, 0, _color); // D
       drawPixelFlip(segWidth - i, segHeight + 1, _color); // G
     }
-    usleep(animSpeed);
+    usleep(_animSpeed);
   }
 }
 
@@ -228,7 +229,7 @@ void Digit::Morph9() {
     // Move E left to right
     drawLineFlip(0 + i - 1, 1, 0 + i - 1, segHeight, black);
     drawLineFlip(0 + i, 1, 0 + i, segHeight, _color);
-    usleep(animSpeed);
+    usleep(_animSpeed);
   }
 }
 
@@ -282,7 +283,7 @@ void Digit::Morph0() {
       if (i<segWidth) drawPixelFlip(segWidth - i, segHeight + 1, black);
       if (i<segWidth) drawPixelFlip(0, segHeight - i, _color);
     }
-    usleep(animSpeed);
+    usleep(_animSpeed);
   }
 }
 
@@ -303,7 +304,7 @@ void Digit::Morph1() {
     drawPixelFlip(1 + i, 0, black); // D
     drawPixelFlip(1 + i, segHeight + 1, black); // G
 
-    usleep(animSpeed);
+    usleep(_animSpeed);
   }
 }
 

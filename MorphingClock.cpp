@@ -33,6 +33,7 @@ static int usage(const char *progname, RGBMatrix::Options &matrix_options, rgb_m
           "\t-0                : Show leading zero in the hour.\n"
           "\t-t                : Use 24-hour clock.\n"
           "\t-C <r,g,b>        : Color. Default 0,0,255\n"
+          "\t-s <animSpeed>    : Microseconds between animation frames. Default: 30000\n"
           );
   return 1;
 }
@@ -68,9 +69,10 @@ int main(int argc, char *argv[]) {
   int segLength = 4;
   bool leadingZero = false;
   char *time_format = "%I:%M";
+  int animSpeed = 30000;
 
   int opt;
-  while ((opt = getopt(argc, argv, "x:y:l:0tC:")) != -1) {
+  while ((opt = getopt(argc, argv, "x:y:l:0tC:s:")) != -1) {
     switch (opt) {
       case 'x':
         xOrig = atoi(optarg);
@@ -92,8 +94,10 @@ int main(int argc, char *argv[]) {
           fprintf(stderr, "Invalid color spec: %s\n", optarg);
           return usage(argv[0], matrix_options, runtime_opt);
         }
-      break;
-      break;
+        break;
+      case 's':
+        animSpeed = atoi(optarg);
+        break;
       default:
         return usage(argv[0], matrix_options, runtime_opt);
     }
@@ -110,10 +114,10 @@ int main(int argc, char *argv[]) {
 
   printf("Press <CTRL-C> to exit and reset LEDs\n");
 
-  Digit digit1(*canvas, 0, xOrig, yOrig, segLength, color);
-  Digit digit2(*canvas, 0, xOrig + (segLength + 3), yOrig, segLength, color);
-  Digit digit3(*canvas, 0, xOrig + 3 + (segLength + 3) * 2, yOrig, segLength, color);
-  Digit digit4(*canvas, 0, xOrig + 3 + (segLength + 3) * 3, yOrig, segLength, color);
+  Digit digit1(*canvas, 0, xOrig, yOrig, segLength, color, animSpeed);
+  Digit digit2(*canvas, 0, xOrig + (segLength + 3), yOrig, segLength, color, animSpeed);
+  Digit digit3(*canvas, 0, xOrig + 3 + (segLength + 3) * 2, yOrig, segLength, color, animSpeed);
+  Digit digit4(*canvas, 0, xOrig + 3 + (segLength + 3) * 3, yOrig, segLength, color, animSpeed);
 
   digit3.DrawColon(color);
   
